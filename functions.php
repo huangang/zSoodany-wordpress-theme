@@ -62,7 +62,7 @@ function get_thumbnail(){
 	elseif(get_field('thumbnail'))
 		$timthumb = get_field('thumbnail'); 
 	else
-		$timthumb = trailingslashit( get_stylesheet_directory_uri() ) . 'images/img1.jpg'; 
+		$timthumb = trailingslashit( get_stylesheet_directory_uri() ) . 'images/br.jpg'; 
 	return $timthumb;
 }
 
@@ -303,7 +303,7 @@ if(function_exists("register_field_group"))
         'name' => 'thumbnail',
         'type' => 'text',
         'instructions' => '填写图片url地址',
-        'default_value' => 'http://huangang.qiniudn.com/wp-content/uploads/2015/02/br-700x220.jpg',
+        'default_value' => '',
         'placeholder' => '',
         'prepend' => '',
         'append' => '',

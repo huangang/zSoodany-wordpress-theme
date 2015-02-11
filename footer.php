@@ -11,7 +11,7 @@
 						$query_posts = new WP_Query(); 
 						$query_posts->query(get_most_viewed_format()); 
 						while( $query_posts->have_posts() ) { $query_posts->the_post(); ?> 
-						<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><img src="<?php echo get_thumbnail(); ?>" width="120"/></a>
+						<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><img src="<?php echo get_thumbnail(); ?>" style="width:120px;height: 90px;"/></a>
 						<?php } wp_reset_query();?> 
 						</div>
 					</div>

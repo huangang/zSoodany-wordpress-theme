@@ -16,7 +16,7 @@
 						</div>
 						<div class="content">
 							<?php
-			                    echo '<img alt="' . get_the_title() . '" src="' . get_thumbnail() . '" width="100%" /> '; 
+			                    echo '<img alt="' . get_the_title() . '" src="' . get_thumbnail() . '" style="width:100%;height: 300px;" /> '; 
 			                 ?>
 			                 <?php the_content("Read More..."); ?>
 						</div>

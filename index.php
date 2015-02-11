@@ -13,7 +13,7 @@
 						</div>
 						<div class="content">
 							<?php
-			                    echo '<img alt="' . get_the_title() . '" src="' . get_thumbnail() . '" width="250px" height="100px" /> '; 
+			                    echo '<img alt="' . get_the_title() . '" src="' . get_thumbnail() . '" style="width:250px;height:180px;" /> '; 
 			                  ?>
 							<?php the_excerpt("Read More..."); ?>
 						</div>
