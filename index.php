@@ -5,6 +5,7 @@
 		<div class="row block">
 			<div id="main-content" class="col-2-3">
 				<div class="wrap-col">
+					<?php if(function_exists('cmp_breadcrumbs')) cmp_breadcrumbs();?>
 					<?php if (have_posts()) : ?>
 					<?php while (have_posts()) : the_post(); ?>
 					<article>

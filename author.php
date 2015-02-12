@@ -5,7 +5,8 @@
 		<div class="row block">
 			<div id="main-content" class="col-full">
 				<div class="wrap-col">
-					<i class="fa fa-user fa-2x"></i><?php the_author_posts_link(); ?><br><br>
+					<?php if(function_exists('cmp_breadcrumbs')) cmp_breadcrumbs();?>
+					<!--<i class="fa fa-user fa-2x"></i><?php the_author_posts_link(); ?><br><br>-->
 					<?php if (have_posts()) : ?>
 					<?php while (have_posts()) : the_post(); ?>
 					<article>

@@ -239,7 +239,7 @@ if( $option['description'] == '' ){
 }
 if( $option['aboutus'] == '' ){   
     //设置默认数据   
-    $option['aboutus'] = 'Html5 Templates created by chinaz. You can use and modify the template for both personal and commercial use. You must keep all copyright information and credit links in the template and associated files.';   
+    $option['aboutus'] = 'You can use and modify the template for both personal and commercial use. You must keep all copyright information and credit links in the template and associated files.';   
     update_option('aboutus', $option['aboutus']);//更新选项   
 }  
 if( $option['contactus'] == '' ){   
@@ -266,18 +266,18 @@ add_action('admin_menu', 'theme_options');
   
 function theme_options_display(){ ?>   
     <form method="post" name="zSoodany_form" id="zSoodany_form">   
-    <h1>zSoodany wordpress theme options</h1>   
+    <h1>zSoodany 主题设置</h1>   
     <p>   
     <label>
-    <h3>Web Description</h3> 
+    <h3>网站关键词</h3> 
     <input name="description" size="80" value="<?php echo get_option('description'); ?>"/>   
     </label>
     <label>
-    <h3>About Us</h3> 
+    <h3>关于我们</h3> 
     <textarea name="aboutus" rows="8" cols="79"><?php echo get_option('aboutus'); ?></textarea>   
     </label>
     <label>
-    <h3>Contact Us</h3> 
+    <h3>联系我们</h3> 
     <textarea name="contactus" rows="8" cols="79"><?php echo get_option('contactus'); ?></textarea>   
     </label>    
     </p>   
@@ -332,5 +332,97 @@ if(function_exists("register_field_group"))
   ));
 }
 
+
+/**
+ * 添加面包屑导航 
+ */
+function cmp_breadcrumbs() {
+  $delimiter = '»'; // 分隔符
+  $before = '<span class="current">'; // 在当前链接前插入
+  $after = '</span>'; // 在当前链接后插入
+  if ( !is_home() && !is_front_page() || is_paged() ) {
+    echo '<div itemscope itemtype="http://schema.org/WebPage" id="crumbs">'.__( '您现在的位置:' , 'cmp' );
+    global $post;
+    $homeLink = home_url();
+    echo ' <a itemprop="breadcrumb" href="' . $homeLink . '">' . __( '主页' , 'cmp' ) . '</a> ' . $delimiter . ' ';
+    if ( is_category() ) { // 分类 存档
+      global $wp_query;
+      $cat_obj = $wp_query->get_queried_object();
+      $thisCat = $cat_obj->term_id;
+      $thisCat = get_category($thisCat);
+      $parentCat = get_category($thisCat->parent);
+      if ($thisCat->parent != 0){
+        $cat_code = get_category_parents($parentCat, TRUE, ' ' . $delimiter . ' ');
+        echo $cat_code = str_replace ('<a','<a itemprop="breadcrumb"', $cat_code );
+      }
+      echo $before . '' . single_cat_title('', false) . '' . $after;
+    } elseif ( is_day() ) { // 天 存档
+      echo '<a itemprop="breadcrumb" href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+      echo '<a itemprop="breadcrumb"  href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
+      echo $before . get_the_time('d') . $after;
+    } elseif ( is_month() ) { // 月 存档
+      echo '<a itemprop="breadcrumb" href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+      echo $before . get_the_time('F') . $after;
+    } elseif ( is_year() ) { // 年 存档
+      echo $before . get_the_time('Y') . $after;
+    } elseif ( is_single() && !is_attachment() ) { // 文章
+      if ( get_post_type() != 'post' ) { // 自定义文章类型
+        $post_type = get_post_type_object(get_post_type());
+        $slug = $post_type->rewrite;
+        echo '<a itemprop="breadcrumb" href="' . $homeLink . '/' . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a> ' . $delimiter . ' ';
+        echo $before . get_the_title() . $after;
+      } else { // 文章 post
+        $cat = get_the_category(); $cat = $cat[0];
+        $cat_code = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+        echo $cat_code = str_replace ('<a','<a itemprop="breadcrumb"', $cat_code );
+        echo $before . get_the_title() . $after;
+      }
+    } elseif ( !is_single() && !is_page() && get_post_type() != 'post' ) {
+      $post_type = get_post_type_object(get_post_type());
+      echo $before . $post_type->labels->singular_name . $after;
+    } elseif ( is_attachment() ) { // 附件
+      $parent = get_post($post->post_parent);
+      $cat = get_the_category($parent->ID); $cat = $cat[0];
+      echo '<a itemprop="breadcrumb" href="' . get_permalink($parent) . '">' . $parent->post_title . '</a> ' . $delimiter . ' ';
+      echo $before . get_the_title() . $after;
+    } elseif ( is_page() && !$post->post_parent ) { // 页面
+      echo $before . get_the_title() . $after;
+    } elseif ( is_page() && $post->post_parent ) { // 父级页面
+      $parent_id  = $post->post_parent;
+      $breadcrumbs = array();
+      while ($parent_id) {
+        $page = get_page($parent_id);
+        $breadcrumbs[] = '<a itemprop="breadcrumb" href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
+        $parent_id  = $page->post_parent;
+      }
+      $breadcrumbs = array_reverse($breadcrumbs);
+      foreach ($breadcrumbs as $crumb) echo $crumb . ' ' . $delimiter . ' ';
+      echo $before . get_the_title() . $after;
+    } elseif ( is_search() ) { // 搜索结果
+      echo $before ;
+      printf( __( '<i class="fa fa-search-plus fa-2x"></i>搜索结果: %s', 'cmp' ),  get_search_query() );
+      echo  $after;
+    } elseif ( is_tag() ) { //标签 存档
+      echo $before ;
+      printf( __( '标签存档: %s', 'cmp' ), single_tag_title( '', false ) );
+      echo  $after;
+    } elseif ( is_author() ) { // 作者存档
+      global $author;
+      $userdata = get_userdata($author);
+      echo $before ;
+      printf( __( '作者存档: <i class="fa fa-user fa-2x"></i>%s', 'cmp' ),  $userdata->display_name );
+      echo  $after;
+    } elseif ( is_404() ) { // 404 页面
+      echo $before;
+      _e( 'Not Found', 'cmp' );
+      echo  $after;
+    }
+    if ( get_query_var('paged') ) { // 分页
+      if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() )
+        echo sprintf( __( '( Page %s )', 'cmp' ), get_query_var('paged') );
+    }
+    echo '</div>';
+  }
+}
 
 

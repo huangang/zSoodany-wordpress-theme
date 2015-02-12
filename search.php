@@ -5,11 +5,7 @@
 		<div class="row block">
 			<div id="main-content" class="col-full">
 				<div class="wrap-col">
-					<?php 
-					$s =$_GET['s'];
-					if($s)
-					echo "<i class='fa fa-search-plus fa-2x'></i><span>".$s."</span>";
-					?>
+					<?php if(function_exists('cmp_breadcrumbs')) cmp_breadcrumbs();?>
 					<?php if (have_posts()) : ?>
 					<?php while (have_posts()) : the_post(); ?>
 					<article>
